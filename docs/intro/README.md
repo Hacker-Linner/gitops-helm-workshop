@@ -1,62 +1,46 @@
 ---
-title: Introduction
+title: 介绍
 ---
 
-# Introduction
+# 介绍
 
-This guide walks you through setting up a progressive delivery GitOps pipeline on a Kubernetes cluster.
+本指南将引导您在 Kubernetes 集群上设置渐进式交付 GitOps 管道。
 
-## What is GitOps?
+## GitOps 是什么？
 
-GitOps is a way to do Continuous Delivery, it works by using Git as a source of truth for
-declarative infrastructure and workloads. For Kubernetes this means using `git push` instead
-of `kubectl create/apply` or `helm install/upgrade`.
+GitOps 是一种进行持续交付的方法，它通过将 Git 用作声明性基础结构和工作负载的真实来源来工作。对于 Kubernetes，这意味着使用 `git push` 代替 `kubectl create/apply` 或者 `kubectl create/apply`。
 
 ::: tip GitOps vs CiOps
 
-In a traditional CI/CD pipeline, CD is an implementation extension powered by the continuous integration tooling
-to promote build artifacts to production. In the GitOps pipeline model, any change to production must be committed
-in source control (preferable via a pull request) prior to being applied on the cluster.
-If the entire production state is under version control and described in a single Git repository,
-when disaster strikes, the whole infrastructure can be quickly restored without rerunning the CI pipelines.
+在传统的 CI/CD 管道中，CD 是由持续集成工具支持的实现扩展，用于将构建工件升级到生产环境。在 GitOps 管道模型中，对生产的任何更改必须先在源代码管理中提交（最好通过拉取请求），然后再应用于集群。如果整个生产状态受版本控制并在单个Git 存储库中进行描述，则在灾难发生时，可以快速恢复整个基础架构，而无需重新运行 CI 管道。
 
-[Kubernetes anti-patterns: Let's do GitOps, not CIOps!](https://www.weave.works/blog/kubernetes-anti-patterns-let-s-do-gitops-not-ciops)
+[Kubernetes 反模式：让我们做 GitOps，而不是 CIOps！](https://www.weave.works/blog/kubernetes-anti-patterns-let-s-do-gitops-not-ciops)
 :::
 
-In order to apply the GitOps model to Kubernetes you need three things:
+为了将 GitOps 模型应用到 Kubernetes 上，你需要做三件事：
 
-* a Git repository with your workloads definitions in YAML format,
-Helm charts and any other Kubernetes custom resource that defines your cluster desired state
-* a container registry where your CI system pushes immutable images
-(no *latest* tags, use *semantic versioning* or git *commit sha*)
-* a Kubernetes controller that does a two-way synchronization:
-    * watches for changes in the config repository and applies them to your cluster
-    * watches the container registry for new images and  updates the workload
-        definitions based on deployment policies
+* 一个 Git 存储库，其中包含以 YAM 格式定义的工作负载、Helm charts 和定义集群所需状态的任何其他 Kubernetes 自定义资源
+* 一个容器注册中心（registry），CI 系统在其中推送不可变的镜像（没有 *latest* 标签，使用 *语义版本控制* 或 git *commit sha*）
+* 一个进行双向同步的 Kubernetes 控制器：
+    * 监视配置存储库中的更改并将其应用于您的集群
+    * 监视容器 registry（注册中心） 的新映像，并根据部署策略更新工作负载定义。
 
-In this workshop you'll be using
-GitHub to host the config repo,
-Docker Hub as the container registry,
-[Flux](https://github.com/fluxcd/flux) as the GitOps controller and
-[Helm Operator](https://github.com/fluxcd/helm-operator) for app lifecycle management.
+在本研讨会中，您将使用 GitHub 托管配置存储库，使用 Docker Hub 作为容器注册中心，使用 [Flux](https://github.com/fluxcd/flux) 作为 GitOps 控制器，并使用 [Helm Operator](https://github.com/fluxcd/helm-operator) 进行应用程序生命周期管理。
 
-## What is Progressive Delivery?
+## 什么是渐进式交付？
 
-Progressive delivery is an umbrella term for advanced deployment patterns like canaries, feature flags and A/B testing.
-Progressive delivery techniques are used to reduce the risk of introducing a new software version in production
-by giving app developers and SRE teams a fine-grained control over the blast radius.
+渐进式交付是高级部署模式（如金丝雀，功能标记和 A/B 测试）的总称。
+通过给予应用程序开发人员和 SRE 团队对爆炸半径的细粒度控制，渐进交付技术被用来降低在生产中引入新软件版本的风险。
 
-::: tip Canary release
+::: tip 金丝雀发布
 
-A benefit of using canary releases is the ability to do capacity testing of the new version in a production environment
-with a safe rollback strategy if issues are found. By slowly ramping up the load, you can monitor and capture metrics
-about how the new version impacts the production environment.
+使用金丝雀的好处是能够在生产环境中使用发现问题的安全回滚策略对新版本进行容量测试。通过缓慢增加负载，您可以监视和捕获有关新版本如何影响生产环境的指标。
 
-[Martin Fowler blog](https://martinfowler.com/bliki/CanaryRelease.html)
+[Martin Fowler 博客](https://martinfowler.com/bliki/CanaryRelease.html)
 :::
 
-In this workshop you'll be using
+在本研讨会中，您将使用
 [Flagger](https://github.com/weaveworks/flagger),
-[Linkerd](https://github.com/linkerd/linkerd2) and
+[Linkerd](https://github.com/linkerd/linkerd2) 和
 [Prometheus](https://github.com/prometheus)
-to automate canary releases for Helm charts.
+来自动化金丝雀分布 Helm charts。
