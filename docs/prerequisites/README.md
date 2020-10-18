@@ -1,12 +1,11 @@
 ---
-title: Prerequisites
+title: 前提条件
 ---
 
-# Prerequisites
+# 前提条件
 
-In order to install the workshop prerequisites you'll need a Kubernetes cluster **1.13**
-or newer with **Load Balancer** support and **RBAC** enabled.
-Make sure you have the following tools installed locally:
+为了安装研讨会的前提条件，您需要一个 Kubernetes 集群（**1.13** 或更新版本），并支持 **负载平衡器** 和 **RBAC**。
+确保您已经在本地安装了以下工具：
 * kubectl 1.16
 * git 2.20
 
