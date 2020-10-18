@@ -13,7 +13,7 @@ global-variables:
     - ls -la
     - ln -sfn /drone/node_modules node_modules
     - npm run docs:build
-    - mv docs/.vuepres/dist helm-workshop
+    - mv docs/.vuepress/dist helm-workshop
     - ls -la
 
   - &deploy
