@@ -21,15 +21,14 @@ brew install helm
 
 ## Git
 
-Fork the [workshop](https://github.com/stefanprodan/gitops-helm-workshop) repository
-and clone it locally (replace the `GHUSER` value with your GitHub username):
+Fork [workshop](https://github.com/stefanprodan/gitops-helm-workshop) 仓库并克隆它到本地（使用你的 GitHub 用户名替换 `GHUSER`）：
 
 ```sh
 export GHUSER=stefanprodan
 git clone https://github.com/${GHUSER}/gitops-helm-workshop
 ```
 
-Set your GitHub username and email:
+设置您的 GitHub 用户名和电子邮件：
 
 ```sh
 cd gitops-helm-workshop
@@ -37,7 +36,7 @@ git config user.name "${GHUSER}"
 git config user.email "your@main.address"
 ```
 
-Cluster state directory structure:
+集群状态目录结构：
 
 ```
 ├── cluster
@@ -50,19 +49,19 @@ Cluster state directory structure:
 
 ## Flux
 
-Add Flux repository to Helm repos:
+将 Flux 存储库添加到 Helm 存储库：
 
 ```sh
 helm repo add fluxcd https://charts.fluxcd.io
 ```
 
-Create the fluxcd namespace:
+创建 fluxcd namespace:
 
 ```sh
 kubectl create ns fluxcd
 ```
 
-Install Flux by providing your GitHub repository URL:
+通过提供您的 GitHub 存储库 URL 安装 Flux：
 
 ```sh
 helm upgrade -i flux fluxcd/flux --wait \
@@ -72,7 +71,7 @@ helm upgrade -i flux fluxcd/flux --wait \
 --set git.url=git@github.com:${GHUSER}/gitops-helm-workshop
 ```
 
-Install fluxctl:
+安装 fluxctl:
 
 ```sh
 # macOS and linux
@@ -83,7 +82,7 @@ export PATH=$PATH:$HOME/.fluxcd/bin
 https://github.com/fluxcd/flux/releases
 ```
 
-Find the Git SSH public key:
+找到 Git SSH 公钥：
 
 ```sh
 export FLUX_FORWARD_NAMESPACE=fluxcd
@@ -91,13 +90,11 @@ export FLUX_FORWARD_NAMESPACE=fluxcd
 fluxctl identity
 ```
 
-Copy the public key and create a deploy key with write access on your GitHub repository.
-Go to `Settings > Deploy keys` click on `Add deploy key`, check `Allow write access`,
-paste the Flux public key and click `Add key`.
+复制公钥并在 GitHub 存储库上创建具有写访问权的部署密钥。转到 `Settings > Deploy keys`，单击 `Add deploy key`，选中 `Allow write access`，粘贴 Flux 公钥并单击 `Add key`。
 
 ## Helm Operator
 
-Install Flux Helm Operator in the `fluxcd` namespace:
+在 `fluxcd` 命名空间中安装 Flux Helm Operator：
 
 ```sh
 helm upgrade -i helm-operator fluxcd/helm-operator --wait \
@@ -110,7 +107,7 @@ helm upgrade -i helm-operator fluxcd/helm-operator --wait \
 
 ## Linkerd
 
-Download the Linkerd v2 CLI:
+下载 Linkerd v2 CLI:
 
 ```sh
 # macOS and linux
@@ -121,13 +118,13 @@ export PATH=$PATH:$HOME/.linkerd2/bin
 https://github.com/linkerd/linkerd2/releases
 ```
 
-Install the Linkerd control plane in the `linkerd` namespace:
+在 `linkerd` 名称空间中安装 Linkerd 控制平面：
 
 ```sh
 linkerd install | kubectl apply -f -
 ```
 
-Validate the install with:
+使用以下命令验证安装：
 
 ```sh
 linkerd check
@@ -135,19 +132,19 @@ linkerd check
 
 ## Flagger
 
-Add Flagger Helm repository:
+添加 Flagger Helm 仓库：
 
 ```sh
 helm repo add flagger https://flagger.app
 ```
 
-Install Flagger's Canary CRD:
+安装 Flagger 的金丝雀 CRD:
 
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/weaveworks/flagger/master/artifacts/flagger/crd.yaml
 ```
 
-Install Flagger in the `linkerd` namespace:
+在 `linkerd` 命名空间中安装 Flagger：
 
 ```sh
 helm upgrade -i flagger flagger/flagger --wait \
