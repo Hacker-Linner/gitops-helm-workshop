@@ -1,14 +1,14 @@
 ---
-title: Canary Helm Tests
+title: 金丝雀 Helm 测试
 ---
 
-# Helm Tests
+# Helm 测试
 
-Flagger comes with a testing service that can run Helm tests when configured as a webhook.
+Flagger 附带有一个测试服务，该服务在配置为 Webhook 时可以运行 Helm 测试。
 
-## Create tests
+## 创建测试
 
-Create a test for the podinfo token API:
+为 podinfo 令牌 API 创建一个测试：
 
 ```yaml{11}
 apiVersion: v1
@@ -39,9 +39,9 @@ spec:
   restartPolicy: Never
 ```
 
-Save the above file in `cluster/charts/podinfo/tests`.
+将以上文件保存在 `cluster/charts/podinfo/tests` 中。
 
-Deploy the Helm test runner in the `prod` namespace:
+在 `prod` 名称空间中部署 Helm 测试运行器：
 
 ```yaml{7}
 apiVersion: helm.fluxcd.io/v1
@@ -62,7 +62,7 @@ spec:
     serviceAccountName: helm-tester
 ```
 
-Apply changes:
+应用更改：
 
 ```sh
 git add -A && \
@@ -71,9 +71,9 @@ git push origin master && \
 fluxctl sync
 ```
 
-## Run tests
+## 运行测试
 
-Add the helm test as a pre-rollout webhook:
+将 helm 测试添加为预发布 webhook：
 
 ```yaml{9,10,11,12,13,14,15}
 apiVersion: flagger.app/v1beta1
@@ -97,7 +97,7 @@ spec:
           cmd: "hey -z 2m -q 10 -c 2 http://podinfo-canary.prod:9898/"
 ```
 
-Apply changes:
+应用更改：
 
 ```sh
 git add -A && \
@@ -106,6 +106,6 @@ git push origin master && \
 fluxctl sync
 ```
 
-When the canary analysis starts, Flagger will call the pre-rollout webhooks before routing traffic to the canary.
-If the helm test fails, Flagger will retry until the analysis threshold is reached and the canary is rolled back.
+当金丝雀分析开始时，Flagger 将在将流量路由到金丝雀之前调用预发布 Webhooks。
+如果 helm 测试失败，Flagger 将重试，直到达到分析阈值并且金丝雀回退为止。
 

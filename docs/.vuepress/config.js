@@ -3,7 +3,7 @@ module.exports = {
     description: '使用 Flux，Helm v3，Linkerd 和 Flagger 渐进式交付 Kubernetes',
     themeConfig: {
         displayAllHeaders: true,
-        repo: 'stefanprodan/gitops-helm-workshop',
+        repo: 'Hacker-Linner/gitops-helm-workshop',
         docsDir: 'docs',
         editLinks: false,
         editLinkText: 'Help us improve this page!',

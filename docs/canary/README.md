@@ -1,14 +1,14 @@
 ---
-title: Canary Releases
+title: 金丝雀发布
 ---
 
-# Canary Releases
+# 金丝雀发布
 
-A canary release is described with a Kubernetes custom resource named **Canary**.
+一个金丝雀发布是用名为 **Canary** 的 Kubernetes 自定义资源描述的。
 
-## Application bootstrap
+## 应用程序启动
 
-Edit the podinfo Helm release and disable the image updates and the ClusterIP service:
+编辑 podinfo Helm release 和禁用 image 更新和 ClusterIP 服务：
 
 ```yaml{7,13,15}
 apiVersion: helm.fluxcd.io/v1
@@ -29,7 +29,7 @@ spec:
       type: ClusterIP
 ```
 
-Apply changes:
+应用更改：
 
 ```sh
 git add -A && \
@@ -38,7 +38,7 @@ git push origin master && \
 fluxctl sync
 ```
 
-Create a canary release for podinfo:
+创建一个针对 podinfo 的金丝雀发布：
 
 ```yaml{7}
 apiVersion: flagger.app/v1beta1
@@ -84,7 +84,7 @@ spec:
           cmd: "hey -z 2m -q 10 -c 2 http://podinfo-canary.prod:9898/"
 ```
 
-Apply changes:
+应用更改：
 
 ```sh
 git add -A && \
@@ -93,15 +93,15 @@ git push origin master && \
 fluxctl sync
 ```
 
-Validate that Flagger has initialized the canary:
+验证 Flagger 已经初始化金丝雀：
 
 ```sh
 kubectl -n prod get canary
 ```
 
-## Automated canary promotion 
+## 自动金丝雀提升 
 
-Install the load testing service to generate traffic during the canary analysis:
+安装负载测试服务以在金丝雀分析期间生成流量：
 
 ```yaml{7}
 apiVersion: helm.fluxcd.io/v1
@@ -121,11 +121,10 @@ spec:
     fullnameOverride: load-tester
 ```
 
-When you deploy a new podinfo version, Flagger gradually shifts traffic to the canary,
-and at the same time, measures the requests success rate as well as the average response duration.
-Based on an analysis of these Linkerd provided metrics, a canary deployment is either promoted or rolled back.
+当您部署新的 podinfo 版本时，Flagger 逐渐将流量转移到金丝雀，同时测量请求的成功率以及平均响应持续时间。
+基于对这些Linkerd提供的指标的分析，金丝雀部署要么提升要么回滚。
 
-Trigger a canary deployment by updating the container image:
+通过更新容器映像来触发金丝雀部署：
 
 ```yaml{7}
 apiVersion: helm.fluxcd.io/v1
@@ -137,7 +136,7 @@ spec:
       tag: 3.1.1
 ```
 
-Apply changes:
+应用更改：
 
 ```sh
 git add -A && \
@@ -146,19 +145,17 @@ git push origin master && \
 fluxctl sync
 ```
 
-When Flagger detects that the deployment revision changed it will start a new rollout.
-You can monitor the traffic shifting with:
+当 Flagger 检测到部署修订版本已更改时，它将开始新的部署。您可以使用以下方法监视流量的变化：
 
 ```sh
 watch kubectl -n prod get canaries
 ```
 
-## Automated rollback
+## 自动回滚
 
-During the canary analysis you can generate HTTP 500 errors and high latency to test if Flagger pauses and
-rolls back the faulted version.
+在金丝雀分析期间，您可能会生成 HTTP 500 错误和高延迟，以测试 Flagger 是否暂停并回滚有故障的版本。
 
-Trigger another canary release:
+触发另一只金丝雀的发布：
 
 ```yaml{7}
 apiVersion: helm.fluxcd.io/v1
@@ -170,7 +167,7 @@ spec:
       tag: 3.1.2
 ```
 
-Apply changes:
+应用更改：
 
 ```sh
 git add -A && \
@@ -179,7 +176,7 @@ git push origin master && \
 fluxctl sync
 ```
 
-Exec into the tester pod and generate HTTP 500 errors:
+执行到测试 pod 和产生 HTTP 500 错误：
 
 ```sh
 kubectl -n prod exec -it $(kubectl -n prod get pods -o name | grep -m1 load-tester | cut -d'/' -f 2) bash
@@ -188,10 +185,9 @@ $ hey -z 1m -c 5 -q 5 http://podinfo-canary:9898/status/500
 $ hey -z 1m -c 5 -q 5 http://podinfo-canary:9898/delay/1
 ```
 
-When the number of failed checks reaches the canary analysis threshold, the traffic is routed back to the primary and 
-the canary is scaled to zero.
+当检查失败的数量达到金丝雀分析阈值时，流量将路由回主要服务器，并且金丝雀将比例缩放为零。
 
-Watch Flagger logs with:
+观看Flagger日志：
 
 ```
 $ kubectl -n linkerd logs deployment/flagger -f | jq .msg
@@ -209,18 +205,18 @@ $ kubectl -n linkerd logs deployment/flagger -f | jq .msg
  Canary failed! Scaling down podinfo.test
 ```
 
-## Monitoring with Linkerd
+## 使用 Linkerd 进行监视
 
-The Linkerd dashboard provides a high level view of what is happening with your services in real time.
-It can be used to visualize service dependencies, traffic splitting and understand the health of specific service routes.
+Linkerd 仪表板可实时提供有关服务情况的高级视图。
+它可用于可视化服务依赖关系，流量拆分和了解特定服务路由的运行状况。
 
-Open the dashboard by running:
+通过运行以下命令打开仪表板：
 
 ```sh
 linkerd dashboard --port=50750
 ```
 
-During the canary analysis, navigate to:
+在金丝雀分析期间，导航至：
 
 ```
 http://127.0.0.1:50750/namespaces/ingress-nginx/deployments/nginx-ingress-controller
@@ -228,18 +224,16 @@ http://127.0.0.1:50750/namespaces/ingress-nginx/deployments/nginx-ingress-contro
 
 ![linkerd](/linkerd-dashboard.png)
 
-You can monitor the live traffic for the production namespace from the command line with:
+您可以使用以下命令从命令行监视生产名称空间的实时流量：
 
 ```sh
 linkerd -n prod top deploy
 ```
 
-And you can view all the routes exposed by podinfo with:
+您可以使用以下命令查看 podinfo 公开的所有路由：
 
 ```sh
 linkerd -n prod routes service/podinfo
 ```
 
-The above routes have been generated from the podinfo swagger spec and exported as Linkerd service profile.
-
-
+以上路由是从 podinfo swagger 规范生成的，并作为 Linkerd 服务配置文件导出。
