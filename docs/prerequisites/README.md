@@ -11,13 +11,13 @@ title: 前提条件
 
 ## Helm v3
 
-Install the Helm v3 CLI on macOS:
+在 macOS 上安装 Helm v3 CLI：
 
 ```sh
 brew install helm
 ```
 
-On Linux or Windows you can download the binary from the [official releases page](https://github.com/helm/helm/releases).
+在 Linux 或 Windows 上，您可以从[官方发布页面](https://github.com/helm/helm/releases)下载二进制文件。
 
 ## Git
 
